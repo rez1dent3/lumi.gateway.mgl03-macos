@@ -3,6 +3,7 @@ If you just need to open telnet on stock firmware, use "software" method:
 https://gist.github.com/zvldz/1bd6b21539f84339c218f9427e022709
 
 ### Hardware
+1. Install `brew install lrzsz`
 1. Pry open gateway:
 
    <img src=https://user-images.githubusercontent.com/511909/98269111-6da8b980-1f9e-11eb-82ef-d435a900edf1.jpg>

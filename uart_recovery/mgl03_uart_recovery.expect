@@ -96,7 +96,7 @@ send_user "rootfs offset: $rootfs_offset\n"
 
 # serial connection
 
-set tty_dev /dev/ttyUSB0
+set tty_dev /dev/cu.usbserial-10
 send_user "\nEnter serial device name ($tty_dev): "
 expect_user -re "(.*)\n"
 set test $expect_out(1,string)
@@ -108,7 +108,7 @@ puts "Connecting to $tty_dev\n"
 set tty_id [open $tty_dev r+]
 
 # serial port parameters
-exec stty -F $tty_dev 38400 raw -ixon -crtscts -echo -istrip -hup
+exec stty -f $tty_dev 38400 raw -ixon -crtscts -echo -istrip -hupcl
 
 # connect
 spawn -open $tty_id
@@ -140,8 +140,7 @@ send "ri 0 1 1\r"
 expect "<RealTek>"
 puts ""
 
-
-spawn sh -c "sx -vv -X -b $bootloader_file < $tty_dev > $tty_dev"
+spawn sh -c "/opt/homebrew/opt/lrzsz/bin/sz -vv -X -b $bootloader_file < $tty_dev > $tty_dev"
 set xmodem $spawn_id
 expect -i $xmodem "Give your local XMODEM receive command now"
 send -i $console "xmrx 80000000\r"
@@ -153,10 +152,10 @@ expect "<RealTek>"
 
 send "j 80000000\r"
 expect "Jump to 0x80000000"
-exec stty -F $tty_dev $bootloader_speed
+exec stty -f $tty_dev $bootloader_speed
 expect "<RealTek>"
 
-spawn sh -c "sx -vv -X -b $firmware_file < $tty_dev > $tty_dev"
+spawn sh -c "/opt/homebrew/opt/lrzsz/bin/sz -vv -X -b $firmware_file < $tty_dev > $tty_dev"
 set xmodem $spawn_id
 expect -i $xmodem "Give your local XMODEM receive command now"
 send -i $console "xmod a0a00000\r"
@@ -193,5 +192,5 @@ send_user "\nIf this project helped you, you can treat me with a cup of coffee :
 expect_user -re "(.*)\n"
 set test $expect_out(1,string)
 if {$test == "y"} {
-	exec xdg-open $coffee_url
+	exec open $coffee_url
 }
